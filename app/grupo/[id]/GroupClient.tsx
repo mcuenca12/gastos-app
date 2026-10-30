@@ -22,7 +22,13 @@ import { supabase } from "@/lib/supabaseClient";
 import { Group, Member, Expense, ExpenseSplit, ExpensePayment, GroupBundle } from "@/lib/types";
 import { computeNetBalances, simplifyDebts, splitEqually } from "@/lib/balances";
 import { formatCOP } from "@/lib/money";
-import { getAdminToken, getStoredMemberId, setStoredMemberId } from "@/lib/storage";
+import {
+  getAdminToken,
+  getStoredMemberId,
+  setStoredMemberId,
+  getStoredPin,
+  setStoredPin,
+} from "@/lib/storage";
 import MoneyInput from "@/components/MoneyInput";
 import Card from "@/components/ui/Card";
 import Input from "@/components/ui/Input";
@@ -32,10 +38,6 @@ import Alert from "@/components/ui/Alert";
 import EmptyState from "@/components/ui/EmptyState";
 import StatusScreen from "@/components/ui/StatusScreen";
 import GroupSkeleton from "@/components/ui/Skeleton";
-
-function pinStorageKey(groupId: string) {
-  return `gastos-pin:${groupId}`;
-}
 
 export default function GroupClient({ groupId }: { groupId: string }) {
   const [group, setGroup] = useState<Group | null>(null);
@@ -127,24 +129,33 @@ export default function GroupClient({ groupId }: { groupId: string }) {
   );
 
   useEffect(() => {
-    let storedPin = "";
-    try {
-      storedPin = sessionStorage.getItem(pinStorageKey(groupId)) ?? "";
-    } catch {
-      // almacenamiento no disponible (modo privado, etc.) — seguimos sin PIN guardado
-    }
+    const storedPin = getStoredPin(groupId) ?? "";
     setPin(storedPin);
     load(storedPin);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groupId]);
 
+  // Avisa (y se entera) cuando algo del grupo cambia en otro navegador:
+  // alguien se une, un admin aprueba/quita, o se agrega/borra un gasto.
+  // El mensaje no lleva datos sensibles, solo "algo cambió, vuelve a pedir
+  // el bundle" — el PIN sigue validándose igual en get_group_bundle.
+  useEffect(() => {
+    const channel = supabase
+      .channel(`group:${groupId}`)
+      .on("broadcast", { event: "group_changed" }, () => {
+        load();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [groupId]);
+
   async function handlePinSubmit(e: React.FormEvent) {
     e.preventDefault();
-    try {
-      sessionStorage.setItem(pinStorageKey(groupId), pinInput);
-    } catch {
-      // si no se puede guardar, igual seguimos: solo se pedirá de nuevo al refrescar
-    }
+    setStoredPin(groupId, pinInput);
     setPin(pinInput);
     await load(pinInput);
   }

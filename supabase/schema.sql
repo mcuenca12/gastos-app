@@ -384,3 +384,39 @@ end;
 $$;
 
 grant execute on function delete_group_expense(uuid, text, uuid) to anon, authenticated;
+
+-- Avisa por Realtime Broadcast (canal público "group:<id>") cuando cambian
+-- integrantes o gastos de un grupo, para que otras pestañas/dispositivos ya
+-- abiertos se refresquen solos. El mensaje no lleva filas ni datos
+-- sensibles, solo la señal de "algo cambió, vuelve a pedir el bundle" — el
+-- cliente sigue llamando a get_group_bundle, que valida el PIN igual que
+-- siempre. Público (no privado) porque esta app no usa Supabase Auth.
+create or replace function notify_group_changed()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_group_id uuid;
+begin
+  v_group_id := coalesce(NEW.group_id, OLD.group_id);
+  perform realtime.send(
+    jsonb_build_object('type', 'group_changed'),
+    'group_changed',
+    'group:' || v_group_id::text,
+    false
+  );
+  return coalesce(NEW, OLD);
+end;
+$$;
+
+drop trigger if exists trg_notify_members_changed on members;
+create trigger trg_notify_members_changed
+after insert or update or delete on members
+for each row execute function notify_group_changed();
+
+drop trigger if exists trg_notify_expenses_changed on expenses;
+create trigger trg_notify_expenses_changed
+after insert or update or delete on expenses
+for each row execute function notify_group_changed();
