@@ -25,16 +25,16 @@ export default function MoneyInput({
 
   return (
     <div>
-      {label && <label className="mb-1.5 block text-sm font-medium text-slate-700">{label}</label>}
+      {label && <label className="mb-1.5 block text-sm font-medium text-sand-700">{label}</label>}
       <div className="relative">
-        <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-sm font-medium text-slate-400">
+        <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-sm font-medium text-sand-500">
           $
         </span>
         <input
           type="text"
           inputMode="numeric"
           autoFocus={autoFocus}
-          className={`w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-7 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 transition-colors focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 ${className}`}
+          className={`w-full rounded-lg border border-sand-200 bg-white py-2.5 pl-7 pr-3.5 text-sm tabular-nums text-sand-900 placeholder:text-sand-400 transition-colors focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 ${className}`}
           placeholder={placeholder}
           value={display}
           onChange={(e) => onChange(digitsOnly(e.target.value))}

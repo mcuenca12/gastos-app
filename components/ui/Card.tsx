@@ -10,11 +10,11 @@ type CardProps = HTMLAttributes<HTMLDivElement> & {
 export default function Card({ title, icon: Icon, children, className = "", ...props }: CardProps) {
   return (
     <section
-      className={`rounded-2xl border border-slate-200/70 bg-white p-5 shadow-card sm:p-6 ${className}`}
+      className={`rounded-2xl border border-sand-200/70 bg-white p-5 shadow-card sm:p-6 ${className}`}
       {...props}
     >
       {title && (
-        <h2 className="mb-4 flex items-center gap-2 font-semibold text-slate-900">
+        <h2 className="mb-4 flex items-center gap-2 font-semibold text-sand-900">
           {Icon && (
             <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
               <Icon className="h-4 w-4" />

@@ -64,10 +64,10 @@ export default function HomePage() {
           <Sparkles className="h-3.5 w-3.5" />
           Sin registro, sin apps que instalar
         </div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+        <h1 className="text-2xl font-bold tracking-tight text-sand-900 sm:text-3xl">
           Divide gastos con tu grupo
         </h1>
-        <p className="mt-2 max-w-md text-sm text-slate-500">
+        <p className="mt-2 max-w-md text-sm text-sand-600">
           Crea un grupo, comparte el link con tu gente y registren los gastos a
           medida que pasan. La app calcula quién le debe a quién.
         </p>

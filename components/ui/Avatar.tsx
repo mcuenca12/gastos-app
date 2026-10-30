@@ -1,12 +1,12 @@
 const PALETTE = [
   "bg-rose-100 text-rose-700",
   "bg-amber-100 text-amber-700",
-  "bg-lime-100 text-lime-700",
-  "bg-teal-100 text-teal-700",
-  "bg-sky-100 text-sky-700",
-  "bg-indigo-100 text-indigo-700",
-  "bg-fuchsia-100 text-fuchsia-700",
+  "bg-lime-100 text-lime-800",
+  "bg-settled-100 text-settled-700",
   "bg-orange-100 text-orange-700",
+  "bg-yellow-100 text-yellow-800",
+  "bg-teal-100 text-teal-800",
+  "bg-stone-200 text-stone-700",
 ];
 
 function colorFor(name: string) {
